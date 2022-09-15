@@ -25,15 +25,18 @@ public class CardDeliveryTest {
 
     @BeforeEach
     void setUp() {
-        Configuration.headless = true;
-        Configuration.holdBrowserOpen = false;
+        Configuration.holdBrowserOpen = true;
         open("http://localhost:9999/");
-        String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + date);
+    }
+
+    public String generateDate(int days) {
+        return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
     @Test
     void happyPathTest() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -45,6 +48,8 @@ public class CardDeliveryTest {
     // не административный центр РФ
     @Test
     void shouldNotPassIfCityIsNotAvailableForDelivery() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Бостон");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -55,6 +60,8 @@ public class CardDeliveryTest {
 
     @Test
     void shouldNotPassIfCityWithLatinLetters() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Moscow");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -65,6 +72,8 @@ public class CardDeliveryTest {
 
     @Test
     void shouldNotPassIfCityWithNumbers() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("777");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -74,6 +83,8 @@ public class CardDeliveryTest {
     }
     @Test
     void shouldNotPassIfCityWithSpecialCharacter() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Москва>");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -84,6 +95,8 @@ public class CardDeliveryTest {
 
     @Test
     void shouldNotPassIfFieldCityIsEmpty() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -95,8 +108,8 @@ public class CardDeliveryTest {
     // дата ранее трех дней
     @Test
     void shouldNotPassIfDateOneDayEarly() {
-        String date = LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + date);
+        String planningDate = generateDate(2);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -107,8 +120,8 @@ public class CardDeliveryTest {
 
     @Test
     void shouldPassIfDateOneDayLater() {
-        String date = LocalDate.now().plusDays(4).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + date);
+        String planningDate = generateDate(4);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -155,8 +168,8 @@ public class CardDeliveryTest {
 
     @Test
     void shouldNotPassIfDateYesterday() {
-        String date = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + date);
+        String planningDate = generateDate(-1);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -168,6 +181,8 @@ public class CardDeliveryTest {
     // флажок не выставлен
     @Test
     void shouldNotPassWithoutAgreementCheckBox() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -177,6 +192,8 @@ public class CardDeliveryTest {
     // телефон: пустое поле
     @Test
     void shouldNotPassWithoutPhoneNumber() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("");
@@ -187,6 +204,8 @@ public class CardDeliveryTest {
     // телефон: "+" и 1 цифра
     @Test
     void shouldNotPassWithOneNumberInPhoneNumber() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+7");
@@ -197,6 +216,8 @@ public class CardDeliveryTest {
     // телефон: "+" и 2 цифры
     @Test
     void shouldNotPassWithTwoNumbersInPhoneNumber() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79");
@@ -207,6 +228,8 @@ public class CardDeliveryTest {
     // телефон: "+" и 10 цифр
     @Test
     void shouldNotPassWithTenNumbersInPhoneNumber() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+711555257");
@@ -217,6 +240,8 @@ public class CardDeliveryTest {
     // телефон: "+" и 12 цифр
     @Test
     void shouldNotPassWithTwelveNumbersInPhoneNumber() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+791155525757");
@@ -227,6 +252,8 @@ public class CardDeliveryTest {
     // телефон: без "+"
     @Test
     void shouldNotPassWithoutPlusInPhoneNumber() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("79115552575");
@@ -237,6 +264,8 @@ public class CardDeliveryTest {
     // телефон: "+" в конце
     @Test
     void shouldNotPassWithPlusAtTheEndOfPhoneNumber() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("79115552575+");
@@ -247,6 +276,8 @@ public class CardDeliveryTest {
     // телефон: с кирилицей
     @Test
     void shouldNotPassWithCyrillicInPhoneNumber() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("телефон");
@@ -257,6 +288,8 @@ public class CardDeliveryTest {
     // телефон: с латиницей
     @Test
     void shouldNotPassWithLatinLettersInPhoneNumber() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("phone");
@@ -267,6 +300,8 @@ public class CardDeliveryTest {
     // телефон: со спецсимволом
     @Test
     void shouldNotPassWithSpecialCharacterInPhoneNumber() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+7911555257>");
@@ -277,6 +312,8 @@ public class CardDeliveryTest {
     // поле ФИО: латиница
     @Test
     void shouldNotPassIfLatinLettersInNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("James Bond");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -287,6 +324,8 @@ public class CardDeliveryTest {
     // поле ФИО: цифры
     @Test
     void shouldNotPassIfNumbersInNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("1111 2222");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -297,6 +336,8 @@ public class CardDeliveryTest {
     // поле ФИО: спецсимвол
     @Test
     void shouldNotPassIfSpecialCharacterInNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев>");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -307,6 +348,8 @@ public class CardDeliveryTest {
     // поле ФИО: апостроф
     @Test
     void shouldPassIfApostropheInNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья О'Генри");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -317,6 +360,8 @@ public class CardDeliveryTest {
     // поле ФИО: ъ вначале
     @Test
     void shouldNotPassSolidMarkIfBeforeTheFieldNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("ъИлья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -327,6 +372,8 @@ public class CardDeliveryTest {
     // поле ФИО: ь вначале
     @Test
     void shouldNotPassSoftSignIfBeforeTheFieldNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("ьИлья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -337,6 +384,8 @@ public class CardDeliveryTest {
     // поле ФИО: буква ё
     @Test
     void shouldPassLetterYoInTheFieldNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарёв");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -347,6 +396,8 @@ public class CardDeliveryTest {
     // поле ФИО: дефис вначале
     @Test
     void shouldNotPassHyphenBeforeTheFieldNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("-Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -357,6 +408,8 @@ public class CardDeliveryTest {
     // поле ФИО: дефис вконце
     @Test
     void shouldNotPassHyphenAtTheEndOfTheFieldNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев-");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -367,6 +420,8 @@ public class CardDeliveryTest {
     // поле ФИО: дефис посередине
     @Test
     void shouldPassHyphenInTheMiddleOfTheFieldNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Чухарев-Иванов");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -377,6 +432,8 @@ public class CardDeliveryTest {
     // поле ФИО: пробел перед именем
     @Test
     void shouldNotPassSpaceBeforeNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue(" Илья Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -387,6 +444,8 @@ public class CardDeliveryTest {
     // поле ФИО: пробел перед фамилией
     @Test
     void shouldNotPass2SpacesBetweenNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья  Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -397,6 +456,8 @@ public class CardDeliveryTest {
     // поле ФИО: только имя
     @Test
     void shouldNotPassNameOnlyInTheFieldNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -407,6 +468,8 @@ public class CardDeliveryTest {
     // поле ФИО: только фамилия
     @Test
     void shouldNotPassSurnameOnlyInTheFieldNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -417,6 +480,8 @@ public class CardDeliveryTest {
     // поле ФИО: имя из 1 буквы, фамилия нормальная
     @Test
     void shouldNotPassIfNameContainsOnly1Letter() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("И Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -427,6 +492,8 @@ public class CardDeliveryTest {
     // поле ФИО: имя из 2 букв, фамилия нормальная
     @Test
     void shouldPassIfNameContains2Letter() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Ян Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -437,6 +504,8 @@ public class CardDeliveryTest {
     // поле ФИО: имя нормальное, фамилия из 1 буквы
     @Test
     void shouldNotPassIfSurnameContainsOnly1Letter() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Ч");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -447,6 +516,8 @@ public class CardDeliveryTest {
     // поле ФИО: имя нормальное, фамилия из 2 букв
     @Test
     void shouldPassIfSurnameContains2Letter() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Хо");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -457,6 +528,8 @@ public class CardDeliveryTest {
     // поле ФИО: пустое
     @Test
     void shouldNotPassEmptyFieldNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -467,6 +540,8 @@ public class CardDeliveryTest {
     // поле ФИО: ФИО с отчеством
     @Test
     void shouldNotPassWithFullNameFieldNameAndSurname() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
         $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
         $x("//input[@name=\"name\"]").setValue("Илья Сергеевич Чухарев");
         $x("//input[@name=\"phone\"]").setValue("+79115552575");
@@ -475,28 +550,16 @@ public class CardDeliveryTest {
         $x("//span[text()=\"Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.\"]").should(Condition.visible, Duration.ofSeconds(15));
     }
 
-    // xpath:
-    //1. //teg - значит ищем на всей странице по тегу
-    //2. //teg1/teg2 - значит ищем в дочернем теге teg2
-    //3. //teg1[@teg2] - ищем по названию атрибута
-    //4. //teg1[@teg2="value"] - ищем по значению атрибута
-    //5. //*[@teg2="value"]- можно не привязываться к начальному тегу, заменив его на *
-    //6. //teg1[text()="текст"] - поиск по тексту веб элемента
-    //7. //teg1[contains(text(),"текст")] - поиск по части текста веб элемента
-    //8. //teg1[contains(@teg2,"teg2 value")] - поиск по содержанию любого другого атрибута
-    //9. //teg1[contains(text(),"текст1")]|//teg1[contains(text(),"текст2")] - поиск одного и того же элемента через логическое выражение или
-    //10. //teg1[contains(text(),"текст")]/../../.. - поиск по части текста веб элемента + поднятие на ступени вверх
-    //11. //teg1[contains(text(),"текст")]/ancestor::teg3 - поднятся к teg3 от teg1
-    // css локаторы
-    // по id: #id
-    // по классу: .class
-    // по атрибуту: наличие атрибута [atribut] или атрибут с определенным значением [atr='value']
-//    S1, S2: S1 или/и S2
-//    S1 S2: один из родителей S1, дочерний S2 (на любой гглубине вложенности)
-//    S1 > S2
-//    S1 + S2
-//    S1 ~ S2
-//    teg[atr]
-//    teg[atr='text']
-
+    @Test
+    void shouldPassIfDateInNotificationContentMatches() {
+        String planningDate = generateDate(3);
+        $x("//input[@placeholder=\"Дата встречи\"]").doubleClick().sendKeys(Keys.DELETE + planningDate);
+        $x("//input[@placeholder=\"Город\"]").setValue("Архангельск");
+        $x("//input[@name=\"name\"]").setValue("Илья Чухарев");
+        $x("//input[@name=\"phone\"]").setValue("+79115552575");
+        $("[data-test-id=\"agreement\"] .checkbox__box").click();
+        $x("//span[contains(text(),\"Забронировать\")]").click();
+        $x("//div[contains(text(),\"Успешно\")]").should(Condition.visible, Duration.ofSeconds(15));
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15)).shouldBe(Condition.visible);
+    }
 }
